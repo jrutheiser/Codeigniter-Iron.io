@@ -3,7 +3,7 @@
  * Codeigniter library for Iron.io
  *
  *
- * @link https://github.com/jrutheiser/Codeigniter-IronMQ
+ * @link https://github.com/jrutheiser/Codeigniter-Iron.io
  * @link http://www.iron.io
  * @link http://dev.iron.io/
  */
