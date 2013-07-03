@@ -34,25 +34,28 @@ Edit config/iron_io.php and fill it in with your Iron.io credentials.
     $this->load->library('iron_io');
 
     /**
+     * IronMQ example
+     *
      * For a complete list of available methods look in Iron_MQ.class.php
      */
-    // IronMQ example
     $this->iron_io->queue->postMessage($queue_name, $message, $properties = array());
 
 
     /**
+     * IronCache example
+     *
      * For a complete list of available methods look in Iron_Cache.class.php
      */
-    // IronCache example
     $this->iron_io->cache->put($key, $item);
 
     $this->iron_io->cache->get($key);
 
 
     /**
+     * IronWorker example
+     *
      * For a complete list of available methods look in Iron_Worker.class.php
      */
-    // IronWorker example
     $this->iron_io->worker->postTask($name, $payload = array(), $options = array());
 
 ```
