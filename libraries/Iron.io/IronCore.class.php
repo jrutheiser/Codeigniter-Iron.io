@@ -11,11 +11,6 @@
  */
 
 class IronCore {
-    // Codeigniter instance
-    private $_ci = NULL;
-    // Ironcore Config file name
-    const CI_CONFIG_FILE = 'iron';
-
     protected $core_version = '0.1.3';
 
     // should be overridden by child class
@@ -36,38 +31,21 @@ class IronCore {
     const header_accept = "application/json";
     const header_accept_encoding = "gzip, deflate";
 
-    protected $url;
-    protected $token;
-    protected $api_version;
-    protected $version;
-    protected $project_id;
-    protected $headers;
-    protected $protocol;
-    protected $host;
-    protected $port;
-    protected $curl = null;
+    public $url;
+    public $token;
+    public $api_version;
+    public $version;
+    public $project_id;
+    public $headers;
+    public $protocol;
+    public $host;
+    public $port;
+    public $curl = null;
 
     public  $max_retries = 5;
     public  $debug_enabled = false;
     public  $ssl_verifypeer = true;
     public  $connection_timeout = 60;
-
-
-    public function loadConfig() {
-        // Get CI instance
-        $this->_ci =& get_instance();
-
-        // Load config
-        $this->_ci->load->config(CI_CONFIG_FILE);
-        
-        // Set values from config
-        $this->token       = $this->_ci->config->item('iron.io_token');
-        $this->project_id  = $this->_ci->config->item('iron.io_project_id');
-        $this->protocol    = $this->_ci->config->item('iron.io_protocol');
-        $this->host        = $this->_ci->config->item('iron.io_host');
-        $this->port        = $this->_ci->config->item('iron.io_port');
-        $this->api_version = $this->_ci->config->item('iron.io_api_version');
-    }
 
     public function __destruct() {
         if ($this->curl != null){
@@ -117,6 +95,90 @@ class IronCore {
 
     protected function userAgent(){
         return "{$this->client_name}-{$this->client_version} (iron_core-{$this->core_version})";
+    }
+
+    /**
+     * Load configuration
+     *
+     * @param array|string|null $config_file_or_options
+     * array of options or name of config file
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    protected function getConfigData($config_file_or_options){
+        if(is_string($config_file_or_options)){
+            if (!file_exists($config_file_or_options)){
+                throw new InvalidArgumentException("Config file $config_file_or_options not found");
+            }
+            $this->loadConfigFile($config_file_or_options);
+        }elseif(is_array($config_file_or_options)){
+            $this->loadFromHash($config_file_or_options);
+        }
+
+        $this->loadConfigFile('iron.ini');
+        $this->loadConfigFile('iron.json');
+
+        $this->loadFromEnv(strtoupper($this->product_name));
+        $this->loadFromEnv('IRON');
+
+        if (!ini_get('open_basedir')){
+            $this->loadConfigFile(self::homeDir() . '.iron.ini');
+            $this->loadConfigFile(self::homeDir() . '.iron.json');
+        }
+
+        $this->loadFromHash($this->default_values);
+
+        if (empty($this->token) || empty($this->project_id)){
+            throw new InvalidArgumentException("token or project_id not found in any of the available sources");
+        }
+    }
+
+
+    protected function loadFromHash($options){
+        if (empty($options)) return;
+        $this->setVarIfValue('token',       $options);
+        $this->setVarIfValue('project_id',  $options);
+        $this->setVarIfValue('protocol',    $options);
+        $this->setVarIfValue('host',        $options);
+        $this->setVarIfValue('port',        $options);
+        $this->setVarIfValue('api_version', $options);
+    }
+
+    protected function loadFromEnv($prefix){
+        $this->setVarIfValue('token',       getenv($prefix. "_TOKEN"));
+        $this->setVarIfValue('project_id',  getenv($prefix. "_PROJECT_ID"));
+        $this->setVarIfValue('protocol',    getenv($prefix. "_SCHEME"));
+        $this->setVarIfValue('host',        getenv($prefix. "_HOST"));
+        $this->setVarIfValue('port',        getenv($prefix. "_PORT"));
+        $this->setVarIfValue('api_version', getenv($prefix. "_API_VERSION"));
+    }
+
+    protected function setVarIfValue($key, $options_or_value){
+        if (!empty($this->$key)) return;
+        if (is_array($options_or_value)){
+            if (!empty($options_or_value[$key])){
+                $this->$key = $options_or_value[$key];
+            }
+        }else{
+            if (!empty($options_or_value)){
+                $this->$key = $options_or_value;
+            }
+        }
+    }
+
+    protected function loadConfigFile($file){
+        if (!file_exists($file)) return;
+        $data = @parse_ini_file($file, true);
+        if ($data === false){
+            $data = json_decode(file_get_contents($file), true);
+        }
+        if (!is_array($data)){
+            throw new InvalidArgumentException("Config file $file not parsed");
+        };
+
+        if (!empty($data[$this->product_name])) $this->loadFromHash($data[$this->product_name]);
+        if (!empty($data['iron'])) $this->loadFromHash($data['iron']);
+        $this->loadFromHash($data);
     }
 
     protected function apiCall($type, $url, $params = array(), $raw_post_data = null){
