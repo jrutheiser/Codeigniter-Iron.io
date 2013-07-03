@@ -36,7 +36,7 @@ Edit config/iron_io.php and fill it in with your Iron.io credentials.
     /**
      * IronMQ example
      *
-     * For a complete list of available methods look in Iron_MQ.class.php
+     * For a complete list of available methods look inside Iron_MQ.class.php
      */
     $this->iron_io->queue->postMessage($queue_name, $message, $properties = array());
 
@@ -44,7 +44,7 @@ Edit config/iron_io.php and fill it in with your Iron.io credentials.
     /**
      * IronCache example
      *
-     * For a complete list of available methods look in Iron_Cache.class.php
+     * For a complete list of available methods look inside Iron_Cache.class.php
      */
     $this->iron_io->cache->put($key, $item);
 
@@ -54,7 +54,7 @@ Edit config/iron_io.php and fill it in with your Iron.io credentials.
     /**
      * IronWorker example
      *
-     * For a complete list of available methods look in Iron_Worker.class.php
+     * For a complete list of available methods look inside Iron_Worker.class.php
      */
     $this->iron_io->worker->postTask($name, $payload = array(), $options = array());
 
