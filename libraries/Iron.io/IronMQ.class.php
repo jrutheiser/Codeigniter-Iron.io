@@ -11,9 +11,6 @@
  * @copyright Feel free to copy, steal, take credit for, or whatever you feel like doing with this code. ;)
  */
 
-// Load Iron.io Core
-require_once(__DIR__.'/Iron.io/IronCore.class.php');
-
 
 class IronMQ_Exception extends Exception{
 
@@ -118,14 +115,14 @@ class IronMQ_Message {
     }
 }
 
-class Iron_MQ extends IronCore {
+class IronMQ extends IronCore {
 
     protected $client_version = '1.4.5';
     protected $client_name    = 'iron_mq_php';
     protected $product_name   = 'iron_mq';
     protected $default_values = array(
         'protocol'    => 'https',
-        'host'        => 'mq-rackspace-dfw.iron.io', //for AWS use mq-aws-us-east-1.iron.io
+        'host'        => 'mq-aws-us-east-1.iron.io',
         'port'        => '443',
         'api_version' => '1',
     );
@@ -147,9 +144,8 @@ class Iron_MQ extends IronCore {
      * - port
      * - api_version
      */
-    function __construct($config = array()){
-        $this->loadConfig();
-        
+    function __construct($config_file_or_options = null){
+        $this->getConfigData($config_file_or_options);
         $this->url = "{$this->protocol}://{$this->host}:{$this->port}/{$this->api_version}/";
     }
 

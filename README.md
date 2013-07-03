@@ -25,7 +25,7 @@ To start using iron_mq_php, you need to sign up and get an oauth token.
 
 ### Configure
 
-Edit config/iron.php and fill it in with your iron.io Token and Project ID
+Edit config/iron_io.php and fill it in with your Iron.io credentials.
 
 --
 
@@ -33,15 +33,30 @@ Edit config/iron.php and fill it in with your iron.io Token and Project ID
 
 ```php
 <?php
-    $this->load->library('iron_mq');
-
-    $this->iron_mq->postMessage($queue_name, $message, $properties = array());
+    $this->load->library('iron_io');
 
     /**
-     * 
-     * For a complete list of available methods look in Iron_mq.php
-     * 
+     * For a complete list of available methods look in Iron_MQ.class.php
      */
+    // IronMQ example
+    $this->iron_io->queue->postMessage($queue_name, $message, $properties = array());
+
+
+    /**
+     * For a complete list of available methods look in Iron_Cache.class.php
+     */
+    // IronMQ example
+    $this->iron_io->cache->put($key, $item);
+
+    $this->iron_io->cache->get($key);
+
+
+    /**
+     * For a complete list of available methods look in Iron_Worker.class.php
+     */
+    // IronMQ example
+    $this->iron_io->worker->postTask($name, $payload = array(), $options = array());
+
 ```
 
 
