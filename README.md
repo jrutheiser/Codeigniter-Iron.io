@@ -1,7 +1,7 @@
-Codeigniter IronMQ/IronCache/IronWorker Library
+Codeigniter Iron.io Library
 -------------
 
-This is a slight modification of the iron.io PHP APIs for use as a Codeigniter library.
+This is a Codeigniter library for iron.io.
 
 ## Getting Started
 
