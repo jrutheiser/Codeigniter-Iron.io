@@ -9,6 +9,7 @@
  * Iron.io Credentials
  */
 $config['auth_token'] = '';
+
 $config['project_id'] = '';
 
 /**
@@ -23,9 +24,3 @@ $config['host']     =  array(
 );
 
 $config['port']     = '443';
-
-
-/**
- * Cache Name for IronCache
- */
-$config['cache_name'] = 'test';

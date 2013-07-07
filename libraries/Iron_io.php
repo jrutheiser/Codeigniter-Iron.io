@@ -2,10 +2,35 @@
 /**
  * Codeigniter library for Iron.io
  *
+ * Wrapper library for utilizing IronMQ, IronWorker, and IronCache. Uses
+ * the PHP Iron.io client libraries. 
  *
+ * You can use all class methods that are found in the "Library/Iron_io/" directory.
+ * 
+ * _________________________________________________________________________________
+ * 
+ * How to use library:
+ * 
+ * // Load library
+ * $this->load->library('iron_io');
+ * 
+ * // IronMQ
+ * $this->iron_io->queue->postMessage("test_queue", "Hello world");
+ * 
+ * // IronCache
+ * $this->iron_io->cache->put("cache_name", "key", "value");
+ * 
+ * // IronWorker
+ * $this->iron_io->worker->postTask("name", $payload = array(), $options = array());
+ * 
+ * _________________________________________________________________________________
+ *
+ * 
  * @link https://github.com/jrutheiser/Codeigniter-IronMQ
  * @link http://www.iron.io
  * @link http://dev.iron.io/
+ * 
+ * @author  Jonatha Rutheiser
  */
 
 
@@ -35,7 +60,6 @@ class Iron_io {
     private $_project_id;
     private $_protocol;
     private $_port;
-    private $_cache_name;
     private $_host = array();
 
 
@@ -53,7 +77,7 @@ class Iron_io {
         require_once(__DIR__. '/' . self::IRON_IO_DIR . '/IronCore.class.php');
 
         // Load Configurations
-        if(! empty($config)) 
+        if (! empty($config)) 
         {
             $this->_initialize($config);
         }
@@ -72,7 +96,7 @@ class Iron_io {
     }
 
     /**
-     * Initialize preferences
+     * Set config settings from array
      *
      * @param   array
      * @return  void
@@ -90,6 +114,8 @@ class Iron_io {
 
     /**
      * Load configuration variables
+     *
+     * @return void
      */
     private function _load_config()
     {
@@ -99,41 +125,37 @@ class Iron_io {
         $this->_protocol   = $this->_ci->config->item('protocol', self::CONFIG_FILE);
         $this->_host       = $this->_ci->config->item('host', self::CONFIG_FILE);
         $this->_port       = $this->_ci->config->item('port', self::CONFIG_FILE);
-        
-        $this->_cache_name = $this->_ci->config->item('cache_name', self::CONFIG_FILE);
     }
 
     /**
      * __get()
      *
      * @param   string $child
-     * 
-     * @return  object
+     * @return  mixed
      */
     public function __get($child)
     {
-        if ( ! isset($this->_classes[$child]))
+        if ( isset($this->_classes[$child]))
         {
-            throw new Exception('Undefined class ' . $child . ' called');
-        }
-
-        if( ! isset($this->_loaded[$child]))
-        {
-            include_once(__DIR__. '/' . self::IRON_IO_DIR . '/' . $this->_classes[$child] . '.class.php');
-
-            // Set API host for iron.io class
-            $this->_config['host'] = $this->_host[$this->_classes[$child]];
-
-            // Set name of cache - if used
-            if($child == 'cache')
+            // Has class been initialized?
+            if (! isset($this->_loaded[$child]))
             {
-                $this->_config['cache_name'] = $this->_cache_name;
+                // Load class file
+                require_once(__DIR__. '/' . self::IRON_IO_DIR . '/' . $this->_classes[$child] . '.class.php');
+
+                // Set API host for iron.io class
+                $this->_config['host'] = $this->_host[$this->_classes[$child]];
+
+                // Init class
+                $this->_loaded[$child] = new $this->_classes[$child]($this->_config);
+
+                return $this->_loaded[$child];
             }
 
-            $this->_loaded[$child] = new $this->_classes[$child]($this->_config);
+            return $this->_loaded[$child];
         }
 
-        return $this->_loaded[$child];
+        return $this->$child;
     }
 
 }
