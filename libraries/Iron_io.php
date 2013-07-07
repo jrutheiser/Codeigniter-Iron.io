@@ -112,7 +112,12 @@ class Iron_io {
      */
     public function __get($child)
     {
-        if(isset($this->_classes[$child]) && ! isset($this->_loaded[$child]))
+        if ( ! isset($this->_classes[$child]))
+        {
+            throw new Exception('Undefined class ' . $child . ' called');
+        }
+
+        if( ! isset($this->_loaded[$child]))
         {
             include_once(__DIR__. '/' . self::IRON_IO_DIR . '/' . $this->_classes[$child] . '.class.php');
 
@@ -126,11 +131,9 @@ class Iron_io {
             }
 
             $this->_loaded[$child] = new $this->_classes[$child]($this->_config);
-
-            return $this->_loaded[$child];
         }
 
-        return $this->$child;
+        return $this->_loaded[$child];
     }
 
 }
