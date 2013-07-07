@@ -31,16 +31,16 @@ class IronCore {
     const header_accept = "application/json";
     const header_accept_encoding = "gzip, deflate";
 
-    public $url;
-    public $token;
-    public $api_version;
-    public $version;
-    public $project_id;
-    public $headers;
-    public $protocol;
-    public $host;
-    public $port;
-    public $curl = null;
+    protected $url;
+    protected $token;
+    protected $api_version;
+    protected $version;
+    protected $project_id;
+    protected $headers;
+    protected $protocol;
+    protected $host;
+    protected $port;
+    protected $curl = null;
 
     public  $max_retries = 5;
     public  $debug_enabled = false;

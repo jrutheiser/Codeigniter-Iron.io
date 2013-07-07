@@ -3,7 +3,7 @@
  * Codeigniter library for Iron.io
  *
  *
- * @link https://github.com/jrutheiser/Codeigniter-Iron.io
+ * @link https://github.com/jrutheiser/Codeigniter-IronMQ
  * @link http://www.iron.io
  * @link http://dev.iron.io/
  */
@@ -21,7 +21,7 @@ class Iron_io {
     private $_ci = NULL;
 
     // Iron.io file locations
-    const IRON_IO_DIR = 'Iron.io';
+    const IRON_IO_DIR = 'Iron_io';
     const CONFIG_FILE = 'iron_io';
 
     // Iron.io objects
@@ -64,10 +64,10 @@ class Iron_io {
         }
 
         $this->_config = array(
-        'token'       => $this->_auth_token,
-        'project_id'  => $this->_project_id,
-        'protocol'    => $this->_protocol,
-        'port'        => $this->_port,
+            'token'       => $this->_auth_token,
+            'project_id'  => $this->_project_id,
+            'protocol'    => $this->_protocol,
+            'port'        => $this->_port,
         );
     }
 
@@ -81,9 +81,9 @@ class Iron_io {
     {
         foreach ($config as $key => $val)
         {
-            if (isset($this->_{$key}))
+            if (isset($this->{'_' . $key}))
             {
-                $this->_{$key} = $val;
+                $this->{'_' . $key} = $val;
             }
         }
     }
@@ -112,12 +112,7 @@ class Iron_io {
      */
     public function __get($child)
     {
-        if ( ! isset($this->_classes[$child]))
-        {
-            throw new Exception('Undefined class ' . $child . ' called');
-        }
-
-        if( ! isset($this->_loaded[$child]))
+        if(isset($this->_classes[$child]) && ! isset($this->_loaded[$child]))
         {
             include_once(__DIR__. '/' . self::IRON_IO_DIR . '/' . $this->_classes[$child] . '.class.php');
 
@@ -131,9 +126,11 @@ class Iron_io {
             }
 
             $this->_loaded[$child] = new $this->_classes[$child]($this->_config);
+
+            return $this->_loaded[$child];
         }
 
-        return $this->_loaded[$child];
+        return $this->$child;
     }
 
 }
