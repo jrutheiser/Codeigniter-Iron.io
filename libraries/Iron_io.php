@@ -3,33 +3,33 @@
  * Codeigniter library for Iron.io
  *
  * Wrapper library for utilizing IronMQ, IronWorker, and IronCache. Uses
- * the PHP Iron.io client libraries. 
+ * the PHP Iron.io client libraries.
  *
  * You can use all class methods that are found in the "Library/Iron_io/" directory.
- * 
- * _________________________________________________________________________________
- * 
- * How to use library:
- * 
- * // Load library
- * $this->load->library('iron_io');
- * 
- * // IronMQ
- * $this->iron_io->queue->postMessage("test_queue", "Hello world");
- * 
- * // IronCache
- * $this->iron_io->cache->put("cache_name", "key", "value");
- * 
- * // IronWorker
- * $this->iron_io->worker->postTask("name", $payload = array(), $options = array());
- * 
+ *
  * _________________________________________________________________________________
  *
- * 
+ * How to use library:
+ *
+ * // Load library
+ * $this->load->library('iron_io');
+ *
+ * // IronMQ
+ * $this->iron_io->queue->postMessage("test_queue", "Hello world");
+ *
+ * // IronCache
+ * $this->iron_io->cache->put("cache_name", "key", "value");
+ *
+ * // IronWorker
+ * $this->iron_io->worker->postTask("name", $payload = array(), $options = array());
+ *
+ * _________________________________________________________________________________
+ *
+ *
  * @link https://github.com/jrutheiser/Codeigniter-IronMQ
  * @link http://www.iron.io
  * @link http://dev.iron.io/
- * 
+ *
  * @author  Jonatha Rutheiser
  */
 
@@ -65,7 +65,7 @@ class Iron_io {
 
     /**
      * __construct()
-     * 
+     *
      * @param array $config
      * @return void
      */
@@ -77,7 +77,7 @@ class Iron_io {
         require_once(__DIR__. '/' . self::IRON_IO_DIR . '/IronCore.class.php');
 
         // Load Configurations
-        if (! empty($config)) 
+        if (! empty($config))
         {
             $this->_initialize($config);
         }
@@ -105,10 +105,7 @@ class Iron_io {
     {
         foreach ($config as $key => $val)
         {
-            if (isset($this->{'_' . $key}))
-            {
-                $this->{'_' . $key} = $val;
-            }
+            $this->{'_' . $key} = $val;
         }
     }
 
@@ -121,7 +118,7 @@ class Iron_io {
     {
         $this->_auth_token = $this->_ci->config->item('auth_token', self::CONFIG_FILE);
         $this->_project_id = $this->_ci->config->item('project_id', self::CONFIG_FILE);
-        
+
         $this->_protocol   = $this->_ci->config->item('protocol', self::CONFIG_FILE);
         $this->_host       = $this->_ci->config->item('host', self::CONFIG_FILE);
         $this->_port       = $this->_ci->config->item('port', self::CONFIG_FILE);
