@@ -30,7 +30,7 @@
  * @link http://www.iron.io
  * @link http://dev.iron.io/
  *
- * @author  Jonatha Rutheiser
+ * @author  Jonathan Rutheiser <jonathan.rutheiser@gmail.com>
  */
 
 
